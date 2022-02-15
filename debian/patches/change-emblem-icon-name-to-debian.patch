@@ -1,0 +1,21 @@
+From: Junyeop Kim <junyeop_kim@tmax.co.kr>
+Date: Tue, 15 Feb 2022 16:06:06 +0900
+Subject: change emblem icon name to debian
+
+---
+ plugins/core/gs-plugin-generic-updates.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/core/gs-plugin-generic-updates.c b/plugins/core/gs-plugin-generic-updates.c
+index f08121b..ea5d78c 100644
+--- a/plugins/core/gs-plugin-generic-updates.c
++++ b/plugins/core/gs-plugin-generic-updates.c
+@@ -136,7 +136,7 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ 				gs_app_get_summary (app));
+ 	ic = as_icon_new ();
+ 	as_icon_set_kind (ic, AS_ICON_KIND_STOCK);
+-	as_icon_set_name (ic, "emblem-tmaxos");
++	as_icon_set_name (ic, "emblem-debian");
+ 	gs_app_add_icon (app, ic);
+ 
+ 	//g_free(os_summary);

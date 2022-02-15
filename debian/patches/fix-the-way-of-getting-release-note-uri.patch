@@ -1,0 +1,161 @@
+From: Junyeop Kim <junyeop_kim@tmax.co.kr>
+Date: Wed, 14 Jul 2021 12:21:29 +0900
+Subject: fix the way of getting release note uri
+
+- get release note uri from /etc/apt/sources.list
+---
+ plugins/core/gs-plugin-generic-updates.c | 36 +++++++++++++++++++++++++++-
+ src/tmaxos-release.c                     | 41 ++++++++++++++++++++++++++++----
+ 2 files changed, 72 insertions(+), 5 deletions(-)
+
+diff --git a/plugins/core/gs-plugin-generic-updates.c b/plugins/core/gs-plugin-generic-updates.c
+index 621b9a5..73d11b7 100644
+--- a/plugins/core/gs-plugin-generic-updates.c
++++ b/plugins/core/gs-plugin-generic-updates.c
+@@ -39,6 +39,38 @@ gs_plugin_generic_updates_merge_os_update (GsApp *app)
+ 	return FALSE;
+ }
+ 
++static const gchar* get_release_note_uri(const gchar *target)
++{
++  const gchar *filename;
++  const gchar *uri = NULL;
++  g_autofree gchar *data = NULL;
++  GMatchInfo *match_info;
++  GRegex *regex;
++
++  filename = "/etc/apt/sources.list";
++  if (!g_file_get_contents (filename, &data, NULL, NULL)) {
++    g_print ("Fail to get sources.list\n");
++    return NULL;
++  }
++
++  regex = g_regex_new ("^deb\\s+(\\w+://[^/\\s]+)", 0, 0, NULL);
++  g_regex_match (regex, data, 0, &match_info);
++
++  if (g_match_info_matches (match_info)) {
++    gchar *res;
++    res = g_match_info_fetch (match_info, 1);
++
++    uri = g_strconcat (res, "/release-notes/", target, NULL);
++
++    g_free (res);
++  }
++
++  g_match_info_free (match_info);
++  g_regex_unref (regex);
++
++  return uri;
++}
++
+ static GsApp *
+ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ {
+@@ -54,6 +86,7 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+   JsonObject *obj = NULL;
+   const gchar *os_latest = NULL;
+   guint status_code;
++  g_autofree gchar *uri = NULL;
+ 
+   /* get last modification time */
+   struct stat buf;
+@@ -62,7 +95,8 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+   strftime(time, 50, "%Y-%m-%d", localtime(&buf.st_mtime));
+ 
+   /* get latest os version */
+-  msg = soup_message_new (SOUP_METHOD_GET, "http://220.90.208.56/release-notes/latest");
++  uri = get_release_note_uri ("latest");
++  msg = soup_message_new (SOUP_METHOD_GET, uri);
+   status_code = soup_session_send_message (gs_plugin_get_soup_session (plugin), msg);
+   if (status_code == SOUP_STATUS_OK) {
+     parser = json_parser_new ();
+diff --git a/src/tmaxos-release.c b/src/tmaxos-release.c
+index 759ba06..e7495c7 100644
+--- a/src/tmaxos-release.c
++++ b/src/tmaxos-release.c
+@@ -2,21 +2,20 @@
+ #include <json-glib/json-glib.h>
+ #include <libsoup/soup.h>
+ 
+-#define TMAXOS_URI "http://220.90.208.56/release-notes/"
+-
+ struct _TmaxosRelease
+ {
+ 	GObject parent_instance;
+ 
+   SoupSession *soup;
+   JsonParser *parser;
++  const gchar *release_note_uri;
+ };
+ 
+ G_DEFINE_TYPE (TmaxosRelease, tmaxos_release, G_TYPE_OBJECT)
+ 
+ const gchar* tmaxos_release_get_content (TmaxosRelease *self, const gchar *name)
+ {
+-  const gchar *uri = g_strconcat (TMAXOS_URI, name, NULL);
++  const gchar *uri = g_strconcat (self->release_note_uri, name, NULL);
+   SoupMessage *msg = NULL;
+   JsonNode *root;
+   JsonObject *obj;
+@@ -45,7 +44,7 @@ const gchar* tmaxos_release_get_content (TmaxosRelease *self, const gchar *name)
+ 
+ GList* tmaxos_release_get_list (TmaxosRelease *self)
+ {
+-  const gchar *uri = g_strconcat (TMAXOS_URI, "list", NULL);
++  const gchar *uri = g_strconcat (self->release_note_uri, "list", NULL);
+   SoupMessage *msg = NULL;
+   JsonNode *root;
+   JsonObject *obj;
+@@ -79,11 +78,44 @@ GList* tmaxos_release_get_list (TmaxosRelease *self)
+   return list;
+ }
+ 
++static const gchar* get_release_note_uri(void)
++{
++  const gchar *filename;
++  const gchar *uri = NULL;
++  g_autofree gchar *data = NULL;
++  GMatchInfo *match_info;
++  GRegex *regex;
++
++  filename = "/etc/apt/sources.list";
++  if (!g_file_get_contents (filename, &data, NULL, NULL)) {
++    g_print ("Fail to get sources.list\n");
++    return NULL;
++  }
++
++  regex = g_regex_new ("^deb\\s+(\\w+://[^/\\s]+)", 0, 0, NULL);
++  g_regex_match (regex, data, 0, &match_info);
++
++  if (g_match_info_matches (match_info)) {
++    gchar *res;
++    res = g_match_info_fetch (match_info, 1);
++
++    uri = g_strconcat (res, "/release-notes/", NULL);
++
++    g_free (res);
++  }
++
++  g_match_info_free (match_info);
++  g_regex_unref (regex);
++
++  return uri;
++}
++
+ static void
+ tmaxos_release_init (TmaxosRelease *self)
+ {
+   self->soup = soup_session_new();
+   self->parser = json_parser_new();
++  self->release_note_uri = get_release_note_uri();
+ }
+ 
+ static void
+@@ -93,6 +125,7 @@ tmaxos_release_finalize (GObject *object)
+ 
+   g_object_unref(tos->soup);
+   g_object_unref(tos->parser);
++  g_free(tos->release_note_uri);
+ 
+ 	G_OBJECT_CLASS (tmaxos_release_parent_class)->finalize (object);
+ }

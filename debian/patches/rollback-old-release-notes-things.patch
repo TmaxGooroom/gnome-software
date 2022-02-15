@@ -1,0 +1,424 @@
+From: Junyeop Kim <junyeop_kim@tmax.co.kr>
+Date: Mon, 10 Jan 2022 10:17:08 +0900
+Subject: rollback old release notes things
+
+---
+ plugins/core/gs-plugin-generic-updates.c |  76 +++++-----
+ src/gs-update-dialog.c                   | 236 +++++++++++++++----------------
+ src/gs-update-dialog.ui                  |   6 +-
+ 3 files changed, 161 insertions(+), 157 deletions(-)
+
+diff --git a/plugins/core/gs-plugin-generic-updates.c b/plugins/core/gs-plugin-generic-updates.c
+index 7a31194..cf388ba 100644
+--- a/plugins/core/gs-plugin-generic-updates.c
++++ b/plugins/core/gs-plugin-generic-updates.c
+@@ -78,42 +78,42 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ 	GsApp *app;
+ 	const gchar *id = "org.gnome.Software.OsUpdate";
+ 	g_autoptr(AsIcon) ic = NULL;
+-	g_autoptr(GsOsRelease) os = NULL;
+-	const gchar *os_ver = NULL;
+-	const gchar *os_summary = NULL;
+-	g_autoptr(SoupMessage) msg = NULL;
+-	g_autoptr(JsonParser) parser = NULL;
+-	JsonNode *root = NULL;
+-	JsonObject *obj = NULL;
+-	const gchar *os_latest = NULL;
+-	guint status_code;
+-	g_autofree gchar *uri = NULL;
+-
+-	/* get last modification time */
+-	struct stat buf;
+-	char time[50] = {0,};
+-	stat ("/etc/os-release", &buf);
+-	strftime(time, 50, "%Y-%m-%d", localtime(&buf.st_mtime));
+-	
+-	/* get latest os version */
+-	uri = get_release_note_uri ("latest");
+-	msg = soup_message_new (SOUP_METHOD_GET, uri);
+-	status_code = soup_session_send_message (gs_plugin_get_soup_session (plugin), msg);
+-	if (status_code == SOUP_STATUS_OK) {
+-		parser = json_parser_new ();
+-		json_parser_load_from_data (parser, msg->response_body->data, -1, NULL);
+-		root = json_parser_get_root (parser);
+-		obj = json_node_get_object (root);
+-		os_latest = json_object_get_string_member (obj, "latestVersion");
+-	}
+-	
+-	/* get current os version */
+-	os = gs_os_release_new (NULL);
+-	os_ver = gs_os_release_get_version_id (os);
+-	os_summary =
+-		g_strconcat(_("Update version"), ":   ", "TmaxOS ", os_latest, "\n",
+-			    _("Current version"), ":   ", "TmaxOS ", os_ver, "\n",
+-			    _("Last installed"), ":   ", time, NULL);
++	//g_autoptr(GsOsRelease) os = NULL;
++	//const gchar *os_ver = NULL;
++	//const gchar *os_summary = NULL;
++	//g_autoptr(SoupMessage) msg = NULL;
++	//g_autoptr(JsonParser) parser = NULL;
++	//JsonNode *root = NULL;
++	//JsonObject *obj = NULL;
++	//const gchar *os_latest = NULL;
++	//guint status_code;
++	//g_autofree gchar *uri = NULL;
++
++	///* get last modification time */
++	//struct stat buf;
++	//char time[50] = {0,};
++	//stat ("/etc/os-release", &buf);
++	//strftime(time, 50, "%Y-%m-%d", localtime(&buf.st_mtime));
++	//
++	///* get latest os version */
++	//uri = get_release_note_uri ("latest");
++	//msg = soup_message_new (SOUP_METHOD_GET, uri);
++	//status_code = soup_session_send_message (gs_plugin_get_soup_session (plugin), msg);
++	//if (status_code == SOUP_STATUS_OK) {
++	//	parser = json_parser_new ();
++	//	json_parser_load_from_data (parser, msg->response_body->data, -1, NULL);
++	//	root = json_parser_get_root (parser);
++	//	obj = json_node_get_object (root);
++	//	os_latest = json_object_get_string_member (obj, "latestVersion");
++	//}
++	//
++	///* get current os version */
++	//os = gs_os_release_new (NULL);
++	//os_ver = gs_os_release_get_version_id (os);
++	//os_summary =
++	//	g_strconcat(_("Update version"), ":   ", "TmaxOS ", os_latest, "\n",
++	//		    _("Current version"), ":   ", "TmaxOS ", os_ver, "\n",
++	//		    _("Last installed"), ":   ", time, NULL);
+ 
+ 	/* create new */
+ 	app = gs_app_new (id);
+@@ -130,7 +130,7 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ 			    GS_APP_QUALITY_NORMAL,
+ 			    /* TRANSLATORS: this is a longer description of the
+ 			     * "OS Updates" string */
+-			    os_summary);
++			    _("Includes performance, stability and security improvements."));
+ 	gs_app_set_description (app,
+ 				GS_APP_QUALITY_NORMAL,
+ 				gs_app_get_summary (app));
+@@ -139,7 +139,7 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ 	as_icon_set_name (ic, "emblem-tmaxos");
+ 	gs_app_add_icon (app, ic);
+ 
+-	g_free(os_summary);
++	//g_free(os_summary);
+ 
+ 	return app;
+ }
+diff --git a/src/gs-update-dialog.c b/src/gs-update-dialog.c
+index ea19567..f17eabb 100644
+--- a/src/gs-update-dialog.c
++++ b/src/gs-update-dialog.c
+@@ -44,11 +44,11 @@ struct _GsUpdateDialog
+ 	GtkWidget	*label_details;
+ 	GtkWidget	*label_name;
+ 	GtkWidget	*label_summary;
+-	GtkWidget	*label_release_note_content;
++	//GtkWidget	*label_release_note_content;
+ 	GtkWidget	*list_boxes[GS_UPDATE_DIALOG_SECTION_LAST];
+ 	GtkWidget	*list_box_installed_updates;
+-	GtkWidget	*list_box_release_notes;
+-	GtkWidget	*os_release_box;
++	//GtkWidget	*list_box_release_notes;
++	//GtkWidget	*os_release_box;
+ 	GtkWidget	*os_update_description;
+ 	GtkWidget	*os_update_box;
+ 	GtkWidget	*scrolledwindow;
+@@ -616,118 +616,118 @@ create_section (GsUpdateDialog *dialog, GsUpdateDialogSection section)
+ }
+ 
+ // @@
+-static void
+-release_notes_header_func (GtkListBoxRow *row,
+-			   GtkListBoxRow *before,
+-			   gpointer user_data)
+-{
+-	GtkStyleContext *context;
+-	GtkWidget *header;
+-	GtkWidget *label;
+-
+-	if (before == NULL) {
+-		/* create header */
+-		header = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
+-		context = gtk_widget_get_style_context (header);
+-		gtk_style_context_add_class (context, "app-listbox-header");
+-		
+-		/* put label into the header */
+-		label = gtk_label_new (_("Release Notes"));
+-		gtk_widget_set_hexpand (label, TRUE);
+-		gtk_container_add (GTK_CONTAINER (header), label);
+-		gtk_widget_set_visible (label, TRUE);
+-		gtk_widget_set_margin_start (label, 6);
+-		gtk_label_set_xalign (GTK_LABEL (label), 0.0);
+-		context = gtk_widget_get_style_context (label);
+-		gtk_style_context_add_class (context, "app-listbox-header-title");
+-	}
+-	else {
+-		header = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+-	}
+-
+-	gtk_list_box_row_set_header (row, header);
+-}
+-
+-static void
+-release_notes_row_activated_cb (GtkListBox *list_box,
+-				GtkListBoxRow *row,
+-				GsUpdateDialog *dialog)
+-{
+-	GtkWidget *item;
+-	TmaxosRelease *tos = tmaxos_release_new();
+-	const gchar *content = NULL;
+-	
+-	save_back_entry (dialog);
+-	
+-	item = gtk_bin_get_child (GTK_BIN (row));
+-	content = tmaxos_release_get_content (tos, gtk_label_get_text (GTK_LABEL (item)));
+-	
+-	gtk_label_set_text (GTK_LABEL (dialog->label_release_note_content), content);
+-	
+-	gtk_widget_set_visible (dialog->button_back, !g_queue_is_empty (dialog->back_entry_stack));
+-	
+-	gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT);
+-	gtk_stack_set_visible_child_name (GTK_STACK (dialog->stack), "os-release-note");
+-	gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_NONE);
+-	
+-	g_free (content);
+-	g_object_unref (tos);
+-}
+-
+-static void
+-create_release_notes (GsUpdateDialog *dialog)
+-{
+-	GtkStyleContext *context;
+-	GtkWidget *label;
+-	TmaxosRelease *tos;
+-	GList *list;
+-	GList *l;
+-	
+-	dialog->list_box_release_notes = gtk_list_box_new ();
+-	gtk_list_box_set_selection_mode (GTK_LIST_BOX (dialog->list_box_release_notes),
+-	                                 GTK_SELECTION_NONE);
+-	gtk_list_box_set_header_func (GTK_LIST_BOX (dialog->list_box_release_notes),
+-	                              release_notes_header_func,
+-	                              dialog, NULL);
+-	g_signal_connect (GTK_LIST_BOX (dialog->list_box_release_notes), "row-activated",
+-	                  G_CALLBACK (release_notes_row_activated_cb), dialog);
+-	gtk_widget_set_visible (dialog->list_box_release_notes, TRUE);
+-	gtk_widget_set_vexpand (dialog->list_box_release_notes, TRUE);
+-	gtk_container_add (GTK_CONTAINER (dialog->os_release_box),
+-	                   dialog->list_box_release_notes);
+-	gtk_widget_set_margin_top (dialog->list_box_release_notes, 0);
+-	
+-	context = gtk_widget_get_style_context (dialog->list_box_release_notes);
+-	gtk_style_context_add_class (context, "app-updates-section");
+-	
+-	tos = tmaxos_release_new ();
+-	list = tmaxos_release_get_list (tos);
+-	
+-	for (l = list; l != NULL; l = l->next)
+-	{
+-	  const gchar *item = l->data;
+-	  label = gtk_label_new (item);
+-	  g_object_set (label,
+-	                "margin-start", 20,
+-	                "margin-end", 0,
+-	                "margin-top", 6,
+-	                "margin-bottom", 6,
+-	                "xalign", 0.0,
+-	                "ellipsize", PANGO_ELLIPSIZE_END,
+-	                NULL);
+-	
+-	  gtk_widget_set_halign (label, GTK_ALIGN_START);
+-	  gtk_widget_set_hexpand (label, TRUE);
+-	  gtk_widget_set_valign (label, GTK_ALIGN_CENTER);
+-	
+-	  gtk_widget_show_all (label);
+-	
+-	  gtk_list_box_insert (GTK_LIST_BOX (dialog->list_box_release_notes), label, -1);
+-	}
+-	
+-	g_list_free_full (list, g_free);
+-	g_object_unref(tos);
+-}
++//static void
++//release_notes_header_func (GtkListBoxRow *row,
++//			   GtkListBoxRow *before,
++//			   gpointer user_data)
++//{
++//	GtkStyleContext *context;
++//	GtkWidget *header;
++//	GtkWidget *label;
++//
++//	if (before == NULL) {
++//		/* create header */
++//		header = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
++//		context = gtk_widget_get_style_context (header);
++//		gtk_style_context_add_class (context, "app-listbox-header");
++//		
++//		/* put label into the header */
++//		label = gtk_label_new (_("Release Notes"));
++//		gtk_widget_set_hexpand (label, TRUE);
++//		gtk_container_add (GTK_CONTAINER (header), label);
++//		gtk_widget_set_visible (label, TRUE);
++//		gtk_widget_set_margin_start (label, 6);
++//		gtk_label_set_xalign (GTK_LABEL (label), 0.0);
++//		context = gtk_widget_get_style_context (label);
++//		gtk_style_context_add_class (context, "app-listbox-header-title");
++//	}
++//	else {
++//		header = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
++//	}
++//
++//	gtk_list_box_row_set_header (row, header);
++//}
++//
++//static void
++//release_notes_row_activated_cb (GtkListBox *list_box,
++//				GtkListBoxRow *row,
++//				GsUpdateDialog *dialog)
++//{
++//	GtkWidget *item;
++//	TmaxosRelease *tos = tmaxos_release_new();
++//	const gchar *content = NULL;
++//	
++//	save_back_entry (dialog);
++//	
++//	item = gtk_bin_get_child (GTK_BIN (row));
++//	content = tmaxos_release_get_content (tos, gtk_label_get_text (GTK_LABEL (item)));
++//	
++//	gtk_label_set_text (GTK_LABEL (dialog->label_release_note_content), content);
++//	
++//	gtk_widget_set_visible (dialog->button_back, !g_queue_is_empty (dialog->back_entry_stack));
++//	
++//	gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT);
++//	gtk_stack_set_visible_child_name (GTK_STACK (dialog->stack), "os-release-note");
++//	gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_NONE);
++//	
++//	g_free (content);
++//	g_object_unref (tos);
++//}
++//
++//static void
++//create_release_notes (GsUpdateDialog *dialog)
++//{
++//	GtkStyleContext *context;
++//	GtkWidget *label;
++//	TmaxosRelease *tos;
++//	GList *list;
++//	GList *l;
++//	
++//	dialog->list_box_release_notes = gtk_list_box_new ();
++//	gtk_list_box_set_selection_mode (GTK_LIST_BOX (dialog->list_box_release_notes),
++//	                                 GTK_SELECTION_NONE);
++//	gtk_list_box_set_header_func (GTK_LIST_BOX (dialog->list_box_release_notes),
++//	                              release_notes_header_func,
++//	                              dialog, NULL);
++//	g_signal_connect (GTK_LIST_BOX (dialog->list_box_release_notes), "row-activated",
++//	                  G_CALLBACK (release_notes_row_activated_cb), dialog);
++//	gtk_widget_set_visible (dialog->list_box_release_notes, TRUE);
++//	gtk_widget_set_vexpand (dialog->list_box_release_notes, TRUE);
++//	gtk_container_add (GTK_CONTAINER (dialog->os_release_box),
++//	                   dialog->list_box_release_notes);
++//	gtk_widget_set_margin_top (dialog->list_box_release_notes, 0);
++//	
++//	context = gtk_widget_get_style_context (dialog->list_box_release_notes);
++//	gtk_style_context_add_class (context, "app-updates-section");
++//	
++//	tos = tmaxos_release_new ();
++//	list = tmaxos_release_get_list (tos);
++//	
++//	for (l = list; l != NULL; l = l->next)
++//	{
++//	  const gchar *item = l->data;
++//	  label = gtk_label_new (item);
++//	  g_object_set (label,
++//	                "margin-start", 20,
++//	                "margin-end", 0,
++//	                "margin-top", 6,
++//	                "margin-bottom", 6,
++//	                "xalign", 0.0,
++//	                "ellipsize", PANGO_ELLIPSIZE_END,
++//	                NULL);
++//	
++//	  gtk_widget_set_halign (label, GTK_ALIGN_START);
++//	  gtk_widget_set_hexpand (label, TRUE);
++//	  gtk_widget_set_valign (label, GTK_ALIGN_CENTER);
++//	
++//	  gtk_widget_show_all (label);
++//	
++//	  gtk_list_box_insert (GTK_LIST_BOX (dialog->list_box_release_notes), label, -1);
++//	}
++//	
++//	g_list_free_full (list, g_free);
++//	g_object_unref(tos);
++//}
+ 
+ void
+ gs_update_dialog_show_update_details (GsUpdateDialog *dialog, GsApp *app)
+@@ -758,7 +758,7 @@ gs_update_dialog_show_update_details (GsUpdateDialog *dialog, GsApp *app)
+ 		                    gs_app_get_description (app));
+ 
+ 		/* show release notes */
+-		create_release_notes (dialog);
++		//create_release_notes (dialog);
+ 
+ 		/* clear existing data */
+ 		for (guint i = 0; i < GS_UPDATE_DIALOG_SECTION_LAST; i++) {
+@@ -938,9 +938,9 @@ gs_update_dialog_class_init (GsUpdateDialogClass *klass)
+ 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_details);
+ 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_name);
+ 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_summary);
+-	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_release_note_content);
++	//gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_release_note_content);
+ 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, list_box_installed_updates);
+-	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, os_release_box);
++	//gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, os_release_box);
+ 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, os_update_description);
+ 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, os_update_box);
+ 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, scrolledwindow);
+diff --git a/src/gs-update-dialog.ui b/src/gs-update-dialog.ui
+index e5200ff..1f2c1b4 100644
+--- a/src/gs-update-dialog.ui
++++ b/src/gs-update-dialog.ui
+@@ -242,11 +242,12 @@
+                     <property name="margin_end">18</property>
+                     <child>
+                       <object class="GtkLabel" id="os_update_description">
+-                        <property name="visible">False</property>
++                        <property name="visible">True</property>
+                         <property name="xalign">0</property>
+                         <property name="wrap">True</property>
+                       </object>
+                     </child>
++		    <!--
+                     <child>
+                       <object class="GtkBox" id="os_release_box">
+                         <property name="visible">True</property>
+@@ -254,6 +255,7 @@
+                         <property name="vexpand">False</property>
+                       </object>
+                     </child>
++		    -->
+                     <child>
+                       <object class="GtkBox" id="os_update_box">
+                         <property name="visible">True</property>
+@@ -268,6 +270,7 @@
+                 <property name="name">os-update-list</property>
+               </packing>
+             </child>
++	    <!--
+             <child>
+               <object class="GtkScrolledWindow" id="scrolledrelease">
+                 <property name="visible">True</property>
+@@ -313,6 +316,7 @@
+                 <property name="name">os-release-note</property>
+               </packing>
+             </child>
++	    -->
+             <child>
+               <object class="GtkScrolledWindow" id="scrolledwindow_installed_updates">
+                 <property name="visible">True</property>

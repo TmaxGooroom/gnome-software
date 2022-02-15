@@ -1,0 +1,7 @@
+gs_shell_activate-bugfix.patch
+feat-TmaxOS-branding-and-add-release-notes.patch
+fix-the-way-of-getting-release-note-uri.patch
+fix-indents.patch
+rollback-old-release-notes-things.patch
+change-branding-for-OS-updates.patch
+change-emblem-icon-name-to-debian.patch

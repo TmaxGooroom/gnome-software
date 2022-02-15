@@ -1,0 +1,20 @@
+From: keonhyuk_lee <keonhyuk_lee@tmax.co.kr>
+Date: Thu, 1 Jul 2021 16:33:18 +0900
+Subject: gs_shell_activate bugfix z-ordering issue bugfix IMS 263205
+
+---
+ src/gs-shell.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/gs-shell.c b/src/gs-shell.c
+index 8f0dc6f..aa48d9d 100644
+--- a/src/gs-shell.c
++++ b/src/gs-shell.c
+@@ -144,6 +144,7 @@ void
+ gs_shell_activate (GsShell *shell)
+ {
+ 	GsShellPrivate *priv = gs_shell_get_instance_private (shell);
++  gtk_widget_show (GTK_WIDGET(priv->main_window));
+ 	gtk_window_present (priv->main_window);
+ }
+ 

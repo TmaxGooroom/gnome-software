@@ -1,0 +1,643 @@
+From: Junyeop Kim <junyeop_kim@tmax.co.kr>
+Date: Tue, 4 Jan 2022 11:59:25 +0900
+Subject: fix indents
+
+---
+ plugins/core/gs-plugin-generic-updates.c | 124 +++++++++----------
+ src/gs-update-dialog.c                   | 204 +++++++++++++++----------------
+ src/tmaxos-release.c                     | 187 ++++++++++++++--------------
+ 3 files changed, 256 insertions(+), 259 deletions(-)
+
+diff --git a/plugins/core/gs-plugin-generic-updates.c b/plugins/core/gs-plugin-generic-updates.c
+index 73d11b7..7a31194 100644
+--- a/plugins/core/gs-plugin-generic-updates.c
++++ b/plugins/core/gs-plugin-generic-updates.c
+@@ -39,36 +39,37 @@ gs_plugin_generic_updates_merge_os_update (GsApp *app)
+ 	return FALSE;
+ }
+ 
+-static const gchar* get_release_note_uri(const gchar *target)
++static const gchar*
++get_release_note_uri(const gchar *target)
+ {
+-  const gchar *filename;
+-  const gchar *uri = NULL;
+-  g_autofree gchar *data = NULL;
+-  GMatchInfo *match_info;
+-  GRegex *regex;
+-
+-  filename = "/etc/apt/sources.list";
+-  if (!g_file_get_contents (filename, &data, NULL, NULL)) {
+-    g_print ("Fail to get sources.list\n");
+-    return NULL;
+-  }
++	const gchar *filename;
++	const gchar *uri = NULL;
++	g_autofree gchar *data = NULL;
++	GMatchInfo *match_info;
++	GRegex *regex;
++
++	filename = "/etc/apt/sources.list";
++	if (!g_file_get_contents (filename, &data, NULL, NULL)) {
++		g_print ("Fail to get sources.list\n");
++		return NULL;
++	}
+ 
+-  regex = g_regex_new ("^deb\\s+(\\w+://[^/\\s]+)", 0, 0, NULL);
+-  g_regex_match (regex, data, 0, &match_info);
++	regex = g_regex_new ("^deb\\s+(\\w+://[^/\\s]+)", 0, 0, NULL);
++	g_regex_match (regex, data, 0, &match_info);
+ 
+-  if (g_match_info_matches (match_info)) {
+-    gchar *res;
+-    res = g_match_info_fetch (match_info, 1);
++	if (g_match_info_matches (match_info)) {
++		gchar *res;
++		res = g_match_info_fetch (match_info, 1);
+ 
+-    uri = g_strconcat (res, "/release-notes/", target, NULL);
++		uri = g_strconcat (res, "/release-notes/", target, NULL);
+ 
+-    g_free (res);
+-  }
++		g_free (res);
++	}
+ 
+-  g_match_info_free (match_info);
+-  g_regex_unref (regex);
++	g_match_info_free (match_info);
++	g_regex_unref (regex);
+ 
+-  return uri;
++	return uri;
+ }
+ 
+ static GsApp *
+@@ -77,43 +78,42 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ 	GsApp *app;
+ 	const gchar *id = "org.gnome.Software.OsUpdate";
+ 	g_autoptr(AsIcon) ic = NULL;
+-  g_autoptr(GsOsRelease) os = NULL;
+-  const gchar *os_ver = NULL;
+-  const gchar *os_summary = NULL;
+-  g_autoptr(SoupMessage) msg = NULL;
+-  g_autoptr(JsonParser) parser = NULL;
+-  JsonNode *root = NULL;
+-  JsonObject *obj = NULL;
+-  const gchar *os_latest = NULL;
+-  guint status_code;
+-  g_autofree gchar *uri = NULL;
+-
+-  /* get last modification time */
+-  struct stat buf;
+-  char time[50] = {0,};
+-  stat ("/etc/os-release", &buf);
+-  strftime(time, 50, "%Y-%m-%d", localtime(&buf.st_mtime));
+-
+-  /* get latest os version */
+-  uri = get_release_note_uri ("latest");
+-  msg = soup_message_new (SOUP_METHOD_GET, uri);
+-  status_code = soup_session_send_message (gs_plugin_get_soup_session (plugin), msg);
+-  if (status_code == SOUP_STATUS_OK) {
+-    parser = json_parser_new ();
+-    json_parser_load_from_data (parser, msg->response_body->data, -1, NULL);
+-    root = json_parser_get_root (parser);
+-    obj = json_node_get_object (root);
+-    os_latest = json_object_get_string_member (obj, "latestVersion");
+-  }
+-
+-  /* get current os version */
+-  os = gs_os_release_new (NULL);
+-  os_ver = gs_os_release_get_version_id (os);
+-  os_summary =
+-    g_strconcat(_("Update version"), ":   ", "TmaxOS ", os_latest, "\n",
+-                _("Current version"), ":   ", "TmaxOS ", os_ver, "\n",
+-                _("Last installed"), ":   ", time,
+-                NULL);
++	g_autoptr(GsOsRelease) os = NULL;
++	const gchar *os_ver = NULL;
++	const gchar *os_summary = NULL;
++	g_autoptr(SoupMessage) msg = NULL;
++	g_autoptr(JsonParser) parser = NULL;
++	JsonNode *root = NULL;
++	JsonObject *obj = NULL;
++	const gchar *os_latest = NULL;
++	guint status_code;
++	g_autofree gchar *uri = NULL;
++
++	/* get last modification time */
++	struct stat buf;
++	char time[50] = {0,};
++	stat ("/etc/os-release", &buf);
++	strftime(time, 50, "%Y-%m-%d", localtime(&buf.st_mtime));
++	
++	/* get latest os version */
++	uri = get_release_note_uri ("latest");
++	msg = soup_message_new (SOUP_METHOD_GET, uri);
++	status_code = soup_session_send_message (gs_plugin_get_soup_session (plugin), msg);
++	if (status_code == SOUP_STATUS_OK) {
++		parser = json_parser_new ();
++		json_parser_load_from_data (parser, msg->response_body->data, -1, NULL);
++		root = json_parser_get_root (parser);
++		obj = json_node_get_object (root);
++		os_latest = json_object_get_string_member (obj, "latestVersion");
++	}
++	
++	/* get current os version */
++	os = gs_os_release_new (NULL);
++	os_ver = gs_os_release_get_version_id (os);
++	os_summary =
++		g_strconcat(_("Update version"), ":   ", "TmaxOS ", os_latest, "\n",
++			    _("Current version"), ":   ", "TmaxOS ", os_ver, "\n",
++			    _("Last installed"), ":   ", time, NULL);
+ 
+ 	/* create new */
+ 	app = gs_app_new (id);
+@@ -130,7 +130,7 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ 			    GS_APP_QUALITY_NORMAL,
+ 			    /* TRANSLATORS: this is a longer description of the
+ 			     * "OS Updates" string */
+-          os_summary);
++			    os_summary);
+ 	gs_app_set_description (app,
+ 				GS_APP_QUALITY_NORMAL,
+ 				gs_app_get_summary (app));
+@@ -139,7 +139,7 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ 	as_icon_set_name (ic, "emblem-tmaxos");
+ 	gs_app_add_icon (app, ic);
+ 
+-  g_free(os_summary);
++	g_free(os_summary);
+ 
+ 	return app;
+ }
+diff --git a/src/gs-update-dialog.c b/src/gs-update-dialog.c
+index 7193776..ea19567 100644
+--- a/src/gs-update-dialog.c
++++ b/src/gs-update-dialog.c
+@@ -44,10 +44,10 @@ struct _GsUpdateDialog
+ 	GtkWidget	*label_details;
+ 	GtkWidget	*label_name;
+ 	GtkWidget	*label_summary;
+-  GtkWidget *label_release_note_content;
++	GtkWidget	*label_release_note_content;
+ 	GtkWidget	*list_boxes[GS_UPDATE_DIALOG_SECTION_LAST];
+ 	GtkWidget	*list_box_installed_updates;
+-  GtkWidget *list_box_release_notes;
++	GtkWidget	*list_box_release_notes;
+ 	GtkWidget	*os_release_box;
+ 	GtkWidget	*os_update_description;
+ 	GtkWidget	*os_update_box;
+@@ -618,115 +618,115 @@ create_section (GsUpdateDialog *dialog, GsUpdateDialogSection section)
+ // @@
+ static void
+ release_notes_header_func (GtkListBoxRow *row,
+-    GtkListBoxRow *before,
+-    gpointer user_data)
++			   GtkListBoxRow *before,
++			   gpointer user_data)
+ {
+-  GtkStyleContext *context;
+-  GtkWidget *header;
+-  GtkWidget *label;
+-
+-  if (before == NULL) {
+-    /* create header */
+-    header = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
+-    context = gtk_widget_get_style_context (header);
+-    gtk_style_context_add_class (context, "app-listbox-header");
+-
+-    /* put label into the header */
+-    label = gtk_label_new (_("Release Notes"));
+-    gtk_widget_set_hexpand (label, TRUE);
+-    gtk_container_add (GTK_CONTAINER (header), label);
+-    gtk_widget_set_visible (label, TRUE);
+-    gtk_widget_set_margin_start (label, 6);
+-    gtk_label_set_xalign (GTK_LABEL (label), 0.0);
+-    context = gtk_widget_get_style_context (label);
+-    gtk_style_context_add_class (context, "app-listbox-header-title");
+-  }
+-  else {
+-    header = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+-  }
+-
+-  gtk_list_box_row_set_header (row, header);
++	GtkStyleContext *context;
++	GtkWidget *header;
++	GtkWidget *label;
++
++	if (before == NULL) {
++		/* create header */
++		header = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
++		context = gtk_widget_get_style_context (header);
++		gtk_style_context_add_class (context, "app-listbox-header");
++		
++		/* put label into the header */
++		label = gtk_label_new (_("Release Notes"));
++		gtk_widget_set_hexpand (label, TRUE);
++		gtk_container_add (GTK_CONTAINER (header), label);
++		gtk_widget_set_visible (label, TRUE);
++		gtk_widget_set_margin_start (label, 6);
++		gtk_label_set_xalign (GTK_LABEL (label), 0.0);
++		context = gtk_widget_get_style_context (label);
++		gtk_style_context_add_class (context, "app-listbox-header-title");
++	}
++	else {
++		header = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
++	}
++
++	gtk_list_box_row_set_header (row, header);
+ }
+ 
+ static void
+ release_notes_row_activated_cb (GtkListBox *list_box,
+-    GtkListBoxRow *row,
+-    GsUpdateDialog *dialog)
++				GtkListBoxRow *row,
++				GsUpdateDialog *dialog)
+ {
+-  GtkWidget *item;
+-  TmaxosRelease *tos = tmaxos_release_new();
+-  const gchar *content = NULL;
+-
+-  save_back_entry (dialog);
+-
+-  item = gtk_bin_get_child (GTK_BIN (row));
+-  content = tmaxos_release_get_content (tos, gtk_label_get_text (GTK_LABEL (item)));
+-
+-  gtk_label_set_text (GTK_LABEL (dialog->label_release_note_content), content);
+-
+-  gtk_widget_set_visible (dialog->button_back, !g_queue_is_empty (dialog->back_entry_stack));
+-
+-  gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT);
+-  gtk_stack_set_visible_child_name (GTK_STACK (dialog->stack), "os-release-note");
+-  gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_NONE);
+-
+-  g_free (content);
+-  g_object_unref (tos);
++	GtkWidget *item;
++	TmaxosRelease *tos = tmaxos_release_new();
++	const gchar *content = NULL;
++	
++	save_back_entry (dialog);
++	
++	item = gtk_bin_get_child (GTK_BIN (row));
++	content = tmaxos_release_get_content (tos, gtk_label_get_text (GTK_LABEL (item)));
++	
++	gtk_label_set_text (GTK_LABEL (dialog->label_release_note_content), content);
++	
++	gtk_widget_set_visible (dialog->button_back, !g_queue_is_empty (dialog->back_entry_stack));
++	
++	gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT);
++	gtk_stack_set_visible_child_name (GTK_STACK (dialog->stack), "os-release-note");
++	gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_NONE);
++	
++	g_free (content);
++	g_object_unref (tos);
+ }
+ 
+ static void
+ create_release_notes (GsUpdateDialog *dialog)
+ {
+-  GtkStyleContext *context;
+-  GtkWidget *label;
+-  TmaxosRelease *tos;
+-  GList *list;
+-  GList *l;
+-
+-  dialog->list_box_release_notes = gtk_list_box_new ();
+-  gtk_list_box_set_selection_mode (GTK_LIST_BOX (dialog->list_box_release_notes),
+-                                   GTK_SELECTION_NONE);
+-  gtk_list_box_set_header_func (GTK_LIST_BOX (dialog->list_box_release_notes),
+-                                release_notes_header_func,
+-                                dialog, NULL);
+-  g_signal_connect (GTK_LIST_BOX (dialog->list_box_release_notes), "row-activated",
+-                    G_CALLBACK (release_notes_row_activated_cb), dialog);
+-  gtk_widget_set_visible (dialog->list_box_release_notes, TRUE);
+-  gtk_widget_set_vexpand (dialog->list_box_release_notes, TRUE);
+-  gtk_container_add (GTK_CONTAINER (dialog->os_release_box),
+-                     dialog->list_box_release_notes);
+-  gtk_widget_set_margin_top (dialog->list_box_release_notes, 0);
+-
+-  context = gtk_widget_get_style_context (dialog->list_box_release_notes);
+-  gtk_style_context_add_class (context, "app-updates-section");
+-
+-  tos = tmaxos_release_new ();
+-  list = tmaxos_release_get_list (tos);
+-
+-  for (l = list; l != NULL; l = l->next)
+-  {
+-    const gchar *item = l->data;
+-    label = gtk_label_new (item);
+-    g_object_set (label,
+-                  "margin-start", 20,
+-                  "margin-end", 0,
+-                  "margin-top", 6,
+-                  "margin-bottom", 6,
+-                  "xalign", 0.0,
+-                  "ellipsize", PANGO_ELLIPSIZE_END,
+-                  NULL);
+-
+-    gtk_widget_set_halign (label, GTK_ALIGN_START);
+-    gtk_widget_set_hexpand (label, TRUE);
+-    gtk_widget_set_valign (label, GTK_ALIGN_CENTER);
+-
+-    gtk_widget_show_all (label);
+-
+-    gtk_list_box_insert (GTK_LIST_BOX (dialog->list_box_release_notes), label, -1);
+-  }
+-
+-  g_list_free_full (list, g_free);
+-  g_object_unref(tos);
++	GtkStyleContext *context;
++	GtkWidget *label;
++	TmaxosRelease *tos;
++	GList *list;
++	GList *l;
++	
++	dialog->list_box_release_notes = gtk_list_box_new ();
++	gtk_list_box_set_selection_mode (GTK_LIST_BOX (dialog->list_box_release_notes),
++	                                 GTK_SELECTION_NONE);
++	gtk_list_box_set_header_func (GTK_LIST_BOX (dialog->list_box_release_notes),
++	                              release_notes_header_func,
++	                              dialog, NULL);
++	g_signal_connect (GTK_LIST_BOX (dialog->list_box_release_notes), "row-activated",
++	                  G_CALLBACK (release_notes_row_activated_cb), dialog);
++	gtk_widget_set_visible (dialog->list_box_release_notes, TRUE);
++	gtk_widget_set_vexpand (dialog->list_box_release_notes, TRUE);
++	gtk_container_add (GTK_CONTAINER (dialog->os_release_box),
++	                   dialog->list_box_release_notes);
++	gtk_widget_set_margin_top (dialog->list_box_release_notes, 0);
++	
++	context = gtk_widget_get_style_context (dialog->list_box_release_notes);
++	gtk_style_context_add_class (context, "app-updates-section");
++	
++	tos = tmaxos_release_new ();
++	list = tmaxos_release_get_list (tos);
++	
++	for (l = list; l != NULL; l = l->next)
++	{
++	  const gchar *item = l->data;
++	  label = gtk_label_new (item);
++	  g_object_set (label,
++	                "margin-start", 20,
++	                "margin-end", 0,
++	                "margin-top", 6,
++	                "margin-bottom", 6,
++	                "xalign", 0.0,
++	                "ellipsize", PANGO_ELLIPSIZE_END,
++	                NULL);
++	
++	  gtk_widget_set_halign (label, GTK_ALIGN_START);
++	  gtk_widget_set_hexpand (label, TRUE);
++	  gtk_widget_set_valign (label, GTK_ALIGN_CENTER);
++	
++	  gtk_widget_show_all (label);
++	
++	  gtk_list_box_insert (GTK_LIST_BOX (dialog->list_box_release_notes), label, -1);
++	}
++	
++	g_list_free_full (list, g_free);
++	g_object_unref(tos);
+ }
+ 
+ void
+@@ -757,8 +757,8 @@ gs_update_dialog_show_update_details (GsUpdateDialog *dialog, GsApp *app)
+ 		gtk_label_set_text (GTK_LABEL (dialog->os_update_description),
+ 		                    gs_app_get_description (app));
+ 
+-    /* show release notes */
+-    create_release_notes (dialog);
++		/* show release notes */
++		create_release_notes (dialog);
+ 
+ 		/* clear existing data */
+ 		for (guint i = 0; i < GS_UPDATE_DIALOG_SECTION_LAST; i++) {
+diff --git a/src/tmaxos-release.c b/src/tmaxos-release.c
+index e7495c7..f92eabb 100644
+--- a/src/tmaxos-release.c
++++ b/src/tmaxos-release.c
+@@ -6,116 +6,114 @@ struct _TmaxosRelease
+ {
+ 	GObject parent_instance;
+ 
+-  SoupSession *soup;
+-  JsonParser *parser;
+-  const gchar *release_note_uri;
++	SoupSession *soup;
++	JsonParser *parser;
++	const gchar *release_note_uri;
+ };
+ 
+ G_DEFINE_TYPE (TmaxosRelease, tmaxos_release, G_TYPE_OBJECT)
+ 
+ const gchar* tmaxos_release_get_content (TmaxosRelease *self, const gchar *name)
+ {
+-  const gchar *uri = g_strconcat (self->release_note_uri, name, NULL);
+-  SoupMessage *msg = NULL;
+-  JsonNode *root;
+-  JsonObject *obj;
+-  const gchar *ret;
+-  guint status_code;
+-
+-  msg = soup_message_new (SOUP_METHOD_GET, uri);
+-  status_code = soup_session_send_message (self->soup, msg);
+-  if (status_code != SOUP_STATUS_OK) {
+-    g_object_unref (msg);
+-    g_free (uri);
+-    return NULL;
+-  }
+-
+-  json_parser_load_from_data (self->parser, msg->response_body->data, -1, NULL);
+-  root = json_parser_get_root (self->parser);
+-  obj = json_node_get_object (root);
+-
+-  ret = json_object_get_string_member (obj, "releaseNoteContents");
+-
+-  g_object_unref (msg);
+-  g_free (uri);
+-
+-  return g_strdup (ret);
++	const gchar *uri = g_strconcat (self->release_note_uri, name, NULL);
++	SoupMessage *msg = NULL;
++	JsonNode *root;
++	JsonObject *obj;
++	const gchar *ret;
++	guint status_code;
++	
++	msg = soup_message_new (SOUP_METHOD_GET, uri);
++	status_code = soup_session_send_message (self->soup, msg);
++	if (status_code != SOUP_STATUS_OK) {
++	  g_object_unref (msg);
++	  g_free (uri);
++	  return NULL;
++	}
++	
++	json_parser_load_from_data (self->parser, msg->response_body->data, -1, NULL);
++	root = json_parser_get_root (self->parser);
++	obj = json_node_get_object (root);
++	
++	ret = json_object_get_string_member (obj, "releaseNoteContents");
++	
++	g_object_unref (msg);
++	g_free (uri);
++	
++	return g_strdup (ret);
+ }
+ 
+ GList* tmaxos_release_get_list (TmaxosRelease *self)
+ {
+-  const gchar *uri = g_strconcat (self->release_note_uri, "list", NULL);
+-  SoupMessage *msg = NULL;
+-  JsonNode *root;
+-  JsonObject *obj;
+-  JsonArray *arr;
+-  guint list_size;
+-  GList *list = NULL;
+-  guint status_code;
+-
+-  msg = soup_message_new (SOUP_METHOD_GET, uri);
+-  status_code = soup_session_send_message (self->soup, msg);
+-  if (status_code != SOUP_STATUS_OK) {
+-    g_object_unref (msg);
+-    g_free (uri);
+-    return NULL;
+-  }
+-
+-  json_parser_load_from_data (self->parser, msg->response_body->data, -1, NULL);
+-  root = json_parser_get_root (self->parser);
+-  obj = json_node_get_object (root);
+-  arr = json_object_get_array_member (obj, "notelist");
+-  list_size = json_array_get_length (arr);
+-
+-  for (guint i = 0; i < list_size; i++)
+-  {
+-    list = g_list_append (list, g_strdup (json_array_get_string_element (arr, i)));
+-  }
+-
+-  g_object_unref (msg);
+-  g_free (uri);
+-
+-  return list;
++	const gchar *uri = g_strconcat (self->release_note_uri, "list", NULL);
++	SoupMessage *msg = NULL;
++	JsonNode *root;
++	JsonObject *obj;
++	JsonArray *arr;
++	guint list_size;
++	GList *list = NULL;
++	guint status_code;
++	
++	msg = soup_message_new (SOUP_METHOD_GET, uri);
++	status_code = soup_session_send_message (self->soup, msg);
++	if (status_code != SOUP_STATUS_OK) {
++		g_object_unref (msg);
++		g_free (uri);
++		return NULL;
++	}
++	
++	json_parser_load_from_data (self->parser, msg->response_body->data, -1, NULL);
++	root = json_parser_get_root (self->parser);
++	obj = json_node_get_object (root);
++	arr = json_object_get_array_member (obj, "notelist");
++	list_size = json_array_get_length (arr);
++	
++	for (guint i = 0; i < list_size; i++)
++	{
++		list = g_list_append (list, g_strdup (json_array_get_string_element (arr, i)));
++	}
++	
++	g_object_unref (msg);
++	g_free (uri);
++	
++	return list;
+ }
+ 
+ static const gchar* get_release_note_uri(void)
+ {
+-  const gchar *filename;
+-  const gchar *uri = NULL;
+-  g_autofree gchar *data = NULL;
+-  GMatchInfo *match_info;
+-  GRegex *regex;
+-
+-  filename = "/etc/apt/sources.list";
+-  if (!g_file_get_contents (filename, &data, NULL, NULL)) {
+-    g_print ("Fail to get sources.list\n");
+-    return NULL;
+-  }
+-
+-  regex = g_regex_new ("^deb\\s+(\\w+://[^/\\s]+)", 0, 0, NULL);
+-  g_regex_match (regex, data, 0, &match_info);
+-
+-  if (g_match_info_matches (match_info)) {
+-    gchar *res;
+-    res = g_match_info_fetch (match_info, 1);
+-
+-    uri = g_strconcat (res, "/release-notes/", NULL);
+-
+-    g_free (res);
+-  }
+-
+-  g_match_info_free (match_info);
+-  g_regex_unref (regex);
+-
+-  return uri;
++	const gchar *filename;
++	const gchar *uri = NULL;
++	g_autofree gchar *data = NULL;
++	GMatchInfo *match_info;
++	GRegex *regex;
++	
++	filename = "/etc/apt/sources.list";
++	if (!g_file_get_contents (filename, &data, NULL, NULL)) {
++		g_print ("Fail to get sources.list\n");
++		return NULL;
++	}
++	
++	regex = g_regex_new ("^deb\\s+(\\w+://[^/\\s]+)", 0, 0, NULL);
++	g_regex_match (regex, data, 0, &match_info);
++	
++	if (g_match_info_matches (match_info)) {
++		gchar *res;
++		res = g_match_info_fetch (match_info, 1);
++		uri = g_strconcat (res, "/release-notes/", NULL);
++		g_free (res);
++	}
++	
++	g_match_info_free (match_info);
++	g_regex_unref (regex);
++	
++	return uri;
+ }
+ 
+ static void
+ tmaxos_release_init (TmaxosRelease *self)
+ {
+-  self->soup = soup_session_new();
+-  self->parser = json_parser_new();
+-  self->release_note_uri = get_release_note_uri();
++	self->soup = soup_session_new();
++	self->parser = json_parser_new();
++	self->release_note_uri = get_release_note_uri();
+ }
+ 
+ static void
+@@ -123,9 +121,9 @@ tmaxos_release_finalize (GObject *object)
+ {
+ 	TmaxosRelease *tos = TMAXOS_RELEASE (object);
+ 
+-  g_object_unref(tos->soup);
+-  g_object_unref(tos->parser);
+-  g_free(tos->release_note_uri);
++	g_object_unref(tos->soup);
++	g_object_unref(tos->parser);
++	g_free(tos->release_note_uri);
+ 
+ 	G_OBJECT_CLASS (tmaxos_release_parent_class)->finalize (object);
+ }
+@@ -144,4 +142,3 @@ tmaxos_release_new (void)
+ 	tos = g_object_new (TMAXOS_TYPE_RELEASE, NULL);
+ 	return TMAXOS_RELEASE (tos);
+ }
+-

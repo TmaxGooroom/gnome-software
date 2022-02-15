@@ -1,0 +1,37 @@
+From: Junyeop Kim <junyeop_kim@tmax.co.kr>
+Date: Tue, 18 Jan 2022 11:23:35 +0900
+Subject: change branding for OS updates
+
+---
+ plugins/core/gs-plugin-generic-updates.c | 2 +-
+ po/ko.po                                 | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/plugins/core/gs-plugin-generic-updates.c b/plugins/core/gs-plugin-generic-updates.c
+index cf388ba..f08121b 100644
+--- a/plugins/core/gs-plugin-generic-updates.c
++++ b/plugins/core/gs-plugin-generic-updates.c
+@@ -125,7 +125,7 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
+ 			 GS_APP_QUALITY_NORMAL,
+ 			 /* TRANSLATORS: this is a group of updates that are not
+ 			  * packages and are not shown in the main list */
+-			 _("TmaxOS Updates"));
++			 _("TmaxGooroom Updates"));
+ 	gs_app_set_summary (app,
+ 			    GS_APP_QUALITY_NORMAL,
+ 			    /* TRANSLATORS: this is a longer description of the
+diff --git a/po/ko.po b/po/ko.po
+index 829f007..77ac5c2 100644
+--- a/po/ko.po
++++ b/po/ko.po
+@@ -4098,8 +4098,8 @@ msgstr "마지막 업데이트 날짜"
+ #. TRANSLATORS: this is a group of updates that are not
+ #. * packages and are not shown in the main list
+ #: plugins/core/gs-plugin-generic-updates.c:64
+-msgid "TmaxOS Updates"
+-msgstr "TmaxOS 업데이트"
++msgid "TmaxGooroom Updates"
++msgstr "Tmax구름 업데이트"
+ 
+ #. TRANSLATORS: this is a longer description of the
+ #. * "OS Updates" string
