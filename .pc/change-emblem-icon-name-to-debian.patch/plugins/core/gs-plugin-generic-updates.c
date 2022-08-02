@@ -136,7 +136,7 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
 				gs_app_get_summary (app));
 	ic = as_icon_new ();
 	as_icon_set_kind (ic, AS_ICON_KIND_STOCK);
-	as_icon_set_name (ic, "emblem-debian");
+	as_icon_set_name (ic, "emblem-tmaxos");
 	gs_app_add_icon (app, ic);
 
 	//g_free(os_summary);

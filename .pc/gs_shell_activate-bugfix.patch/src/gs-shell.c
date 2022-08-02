@@ -144,7 +144,6 @@ void
 gs_shell_activate (GsShell *shell)
 {
 	GsShellPrivate *priv = gs_shell_get_instance_private (shell);
-  gtk_widget_show (GTK_WIDGET(priv->main_window));
 	gtk_window_present (priv->main_window);
 }
 

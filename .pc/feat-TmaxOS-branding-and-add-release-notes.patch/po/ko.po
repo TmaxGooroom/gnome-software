@@ -3220,17 +3220,9 @@ msgstr "업데이트"
 msgid "Downgrades"
 msgstr "다운그레이드"
 
-#: src/gs-update-dialog.c:635
-msgid "Release Notes"
-msgstr "릴리즈 노트"
-
 #: src/gs-update-dialog.ui:100
 msgid "No updates have been installed on this system."
 msgstr "이 시스템에 설치한 업데이트가 없습니다."
-
-#: src/gs-update-dialog.ui:100
-msgid "Release Note"
-msgstr "릴리즈 노트"
 
 #: src/gs-update-monitor.c:111
 msgid "Security Updates Pending"
@@ -4080,26 +4072,11 @@ msgstr "참고 자료"
 msgid "Utilities"
 msgstr "유틸리티"
 
-#. TRANSLATORS:
-#: plugins/core/gs-plugin-generic-updates.c:50
-msgid "Update version"
-msgstr "업데이트 버전"
-
-#. TRANSLATORS:
-#: plugins/core/gs-plugin-generic-updates.c:50
-msgid "Current version"
-msgstr "현재 버전"
-
-#. TRANSLATORS:
-#: plugins/core/gs-plugin-generic-updates.c:51
-msgid "Last installed"
-msgstr "마지막 업데이트 날짜"
-
 #. TRANSLATORS: this is a group of updates that are not
 #. * packages and are not shown in the main list
-#: plugins/core/gs-plugin-generic-updates.c:64
-msgid "TmaxGooroom Updates"
-msgstr "Tmax구름 업데이트"
+#: plugins/core/gs-plugin-generic-updates.c:56
+msgid "OS Updates"
+msgstr "운영체제 업데이트"
 
 #. TRANSLATORS: this is a longer description of the
 #. * "OS Updates" string

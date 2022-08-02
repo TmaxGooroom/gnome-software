@@ -4098,8 +4098,8 @@ msgstr "마지막 업데이트 날짜"
 #. TRANSLATORS: this is a group of updates that are not
 #. * packages and are not shown in the main list
 #: plugins/core/gs-plugin-generic-updates.c:64
-msgid "TmaxGooroom Updates"
-msgstr "Tmax구름 업데이트"
+msgid "TmaxOS Updates"
+msgstr "TmaxOS 업데이트"
 
 #. TRANSLATORS: this is a longer description of the
 #. * "OS Updates" string

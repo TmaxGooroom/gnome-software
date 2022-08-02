@@ -78,42 +78,42 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
 	GsApp *app;
 	const gchar *id = "org.gnome.Software.OsUpdate";
 	g_autoptr(AsIcon) ic = NULL;
-	//g_autoptr(GsOsRelease) os = NULL;
-	//const gchar *os_ver = NULL;
-	//const gchar *os_summary = NULL;
-	//g_autoptr(SoupMessage) msg = NULL;
-	//g_autoptr(JsonParser) parser = NULL;
-	//JsonNode *root = NULL;
-	//JsonObject *obj = NULL;
-	//const gchar *os_latest = NULL;
-	//guint status_code;
-	//g_autofree gchar *uri = NULL;
+	g_autoptr(GsOsRelease) os = NULL;
+	const gchar *os_ver = NULL;
+	const gchar *os_summary = NULL;
+	g_autoptr(SoupMessage) msg = NULL;
+	g_autoptr(JsonParser) parser = NULL;
+	JsonNode *root = NULL;
+	JsonObject *obj = NULL;
+	const gchar *os_latest = NULL;
+	guint status_code;
+	g_autofree gchar *uri = NULL;
 
-	///* get last modification time */
-	//struct stat buf;
-	//char time[50] = {0,};
-	//stat ("/etc/os-release", &buf);
-	//strftime(time, 50, "%Y-%m-%d", localtime(&buf.st_mtime));
-	//
-	///* get latest os version */
-	//uri = get_release_note_uri ("latest");
-	//msg = soup_message_new (SOUP_METHOD_GET, uri);
-	//status_code = soup_session_send_message (gs_plugin_get_soup_session (plugin), msg);
-	//if (status_code == SOUP_STATUS_OK) {
-	//	parser = json_parser_new ();
-	//	json_parser_load_from_data (parser, msg->response_body->data, -1, NULL);
-	//	root = json_parser_get_root (parser);
-	//	obj = json_node_get_object (root);
-	//	os_latest = json_object_get_string_member (obj, "latestVersion");
-	//}
-	//
-	///* get current os version */
-	//os = gs_os_release_new (NULL);
-	//os_ver = gs_os_release_get_version_id (os);
-	//os_summary =
-	//	g_strconcat(_("Update version"), ":   ", "TmaxOS ", os_latest, "\n",
-	//		    _("Current version"), ":   ", "TmaxOS ", os_ver, "\n",
-	//		    _("Last installed"), ":   ", time, NULL);
+	/* get last modification time */
+	struct stat buf;
+	char time[50] = {0,};
+	stat ("/etc/os-release", &buf);
+	strftime(time, 50, "%Y-%m-%d", localtime(&buf.st_mtime));
+	
+	/* get latest os version */
+	uri = get_release_note_uri ("latest");
+	msg = soup_message_new (SOUP_METHOD_GET, uri);
+	status_code = soup_session_send_message (gs_plugin_get_soup_session (plugin), msg);
+	if (status_code == SOUP_STATUS_OK) {
+		parser = json_parser_new ();
+		json_parser_load_from_data (parser, msg->response_body->data, -1, NULL);
+		root = json_parser_get_root (parser);
+		obj = json_node_get_object (root);
+		os_latest = json_object_get_string_member (obj, "latestVersion");
+	}
+	
+	/* get current os version */
+	os = gs_os_release_new (NULL);
+	os_ver = gs_os_release_get_version_id (os);
+	os_summary =
+		g_strconcat(_("Update version"), ":   ", "TmaxOS ", os_latest, "\n",
+			    _("Current version"), ":   ", "TmaxOS ", os_ver, "\n",
+			    _("Last installed"), ":   ", time, NULL);
 
 	/* create new */
 	app = gs_app_new (id);
@@ -125,21 +125,21 @@ gs_plugin_generic_updates_get_os_update (GsPlugin *plugin)
 			 GS_APP_QUALITY_NORMAL,
 			 /* TRANSLATORS: this is a group of updates that are not
 			  * packages and are not shown in the main list */
-			 _("TmaxGooroom Updates"));
+			 _("TmaxOS Updates"));
 	gs_app_set_summary (app,
 			    GS_APP_QUALITY_NORMAL,
 			    /* TRANSLATORS: this is a longer description of the
 			     * "OS Updates" string */
-			    _("Includes performance, stability and security improvements."));
+			    os_summary);
 	gs_app_set_description (app,
 				GS_APP_QUALITY_NORMAL,
 				gs_app_get_summary (app));
 	ic = as_icon_new ();
 	as_icon_set_kind (ic, AS_ICON_KIND_STOCK);
-	as_icon_set_name (ic, "emblem-debian");
+	as_icon_set_name (ic, "emblem-tmaxos");
 	gs_app_add_icon (app, ic);
 
-	//g_free(os_summary);
+	g_free(os_summary);
 
 	return app;
 }

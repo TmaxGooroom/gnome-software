@@ -44,11 +44,11 @@ struct _GsUpdateDialog
 	GtkWidget	*label_details;
 	GtkWidget	*label_name;
 	GtkWidget	*label_summary;
-	//GtkWidget	*label_release_note_content;
+  GtkWidget *label_release_note_content;
 	GtkWidget	*list_boxes[GS_UPDATE_DIALOG_SECTION_LAST];
 	GtkWidget	*list_box_installed_updates;
-	//GtkWidget	*list_box_release_notes;
-	//GtkWidget	*os_release_box;
+  GtkWidget *list_box_release_notes;
+	GtkWidget	*os_release_box;
 	GtkWidget	*os_update_description;
 	GtkWidget	*os_update_box;
 	GtkWidget	*scrolledwindow;
@@ -616,118 +616,118 @@ create_section (GsUpdateDialog *dialog, GsUpdateDialogSection section)
 }
 
 // @@
-//static void
-//release_notes_header_func (GtkListBoxRow *row,
-//			   GtkListBoxRow *before,
-//			   gpointer user_data)
-//{
-//	GtkStyleContext *context;
-//	GtkWidget *header;
-//	GtkWidget *label;
-//
-//	if (before == NULL) {
-//		/* create header */
-//		header = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
-//		context = gtk_widget_get_style_context (header);
-//		gtk_style_context_add_class (context, "app-listbox-header");
-//		
-//		/* put label into the header */
-//		label = gtk_label_new (_("Release Notes"));
-//		gtk_widget_set_hexpand (label, TRUE);
-//		gtk_container_add (GTK_CONTAINER (header), label);
-//		gtk_widget_set_visible (label, TRUE);
-//		gtk_widget_set_margin_start (label, 6);
-//		gtk_label_set_xalign (GTK_LABEL (label), 0.0);
-//		context = gtk_widget_get_style_context (label);
-//		gtk_style_context_add_class (context, "app-listbox-header-title");
-//	}
-//	else {
-//		header = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-//	}
-//
-//	gtk_list_box_row_set_header (row, header);
-//}
-//
-//static void
-//release_notes_row_activated_cb (GtkListBox *list_box,
-//				GtkListBoxRow *row,
-//				GsUpdateDialog *dialog)
-//{
-//	GtkWidget *item;
-//	TmaxosRelease *tos = tmaxos_release_new();
-//	const gchar *content = NULL;
-//	
-//	save_back_entry (dialog);
-//	
-//	item = gtk_bin_get_child (GTK_BIN (row));
-//	content = tmaxos_release_get_content (tos, gtk_label_get_text (GTK_LABEL (item)));
-//	
-//	gtk_label_set_text (GTK_LABEL (dialog->label_release_note_content), content);
-//	
-//	gtk_widget_set_visible (dialog->button_back, !g_queue_is_empty (dialog->back_entry_stack));
-//	
-//	gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT);
-//	gtk_stack_set_visible_child_name (GTK_STACK (dialog->stack), "os-release-note");
-//	gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_NONE);
-//	
-//	g_free (content);
-//	g_object_unref (tos);
-//}
-//
-//static void
-//create_release_notes (GsUpdateDialog *dialog)
-//{
-//	GtkStyleContext *context;
-//	GtkWidget *label;
-//	TmaxosRelease *tos;
-//	GList *list;
-//	GList *l;
-//	
-//	dialog->list_box_release_notes = gtk_list_box_new ();
-//	gtk_list_box_set_selection_mode (GTK_LIST_BOX (dialog->list_box_release_notes),
-//	                                 GTK_SELECTION_NONE);
-//	gtk_list_box_set_header_func (GTK_LIST_BOX (dialog->list_box_release_notes),
-//	                              release_notes_header_func,
-//	                              dialog, NULL);
-//	g_signal_connect (GTK_LIST_BOX (dialog->list_box_release_notes), "row-activated",
-//	                  G_CALLBACK (release_notes_row_activated_cb), dialog);
-//	gtk_widget_set_visible (dialog->list_box_release_notes, TRUE);
-//	gtk_widget_set_vexpand (dialog->list_box_release_notes, TRUE);
-//	gtk_container_add (GTK_CONTAINER (dialog->os_release_box),
-//	                   dialog->list_box_release_notes);
-//	gtk_widget_set_margin_top (dialog->list_box_release_notes, 0);
-//	
-//	context = gtk_widget_get_style_context (dialog->list_box_release_notes);
-//	gtk_style_context_add_class (context, "app-updates-section");
-//	
-//	tos = tmaxos_release_new ();
-//	list = tmaxos_release_get_list (tos);
-//	
-//	for (l = list; l != NULL; l = l->next)
-//	{
-//	  const gchar *item = l->data;
-//	  label = gtk_label_new (item);
-//	  g_object_set (label,
-//	                "margin-start", 20,
-//	                "margin-end", 0,
-//	                "margin-top", 6,
-//	                "margin-bottom", 6,
-//	                "xalign", 0.0,
-//	                "ellipsize", PANGO_ELLIPSIZE_END,
-//	                NULL);
-//	
-//	  gtk_widget_set_halign (label, GTK_ALIGN_START);
-//	  gtk_widget_set_hexpand (label, TRUE);
-//	  gtk_widget_set_valign (label, GTK_ALIGN_CENTER);
-//	
-//	  gtk_widget_show_all (label);
-//	
-//	  gtk_list_box_insert (GTK_LIST_BOX (dialog->list_box_release_notes), label, -1);
-//	}
-//	
-//	g_list_free_full (list, g_free);
-//	g_object_unref(tos);
-//}
+static void
+release_notes_header_func (GtkListBoxRow *row,
+    GtkListBoxRow *before,
+    gpointer user_data)
+{
+  GtkStyleContext *context;
+  GtkWidget *header;
+  GtkWidget *label;
+
+  if (before == NULL) {
+    /* create header */
+    header = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
+    context = gtk_widget_get_style_context (header);
+    gtk_style_context_add_class (context, "app-listbox-header");
+
+    /* put label into the header */
+    label = gtk_label_new (_("Release Notes"));
+    gtk_widget_set_hexpand (label, TRUE);
+    gtk_container_add (GTK_CONTAINER (header), label);
+    gtk_widget_set_visible (label, TRUE);
+    gtk_widget_set_margin_start (label, 6);
+    gtk_label_set_xalign (GTK_LABEL (label), 0.0);
+    context = gtk_widget_get_style_context (label);
+    gtk_style_context_add_class (context, "app-listbox-header-title");
+  }
+  else {
+    header = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+  }
+
+  gtk_list_box_row_set_header (row, header);
+}
+
+static void
+release_notes_row_activated_cb (GtkListBox *list_box,
+    GtkListBoxRow *row,
+    GsUpdateDialog *dialog)
+{
+  GtkWidget *item;
+  TmaxosRelease *tos = tmaxos_release_new();
+  const gchar *content = NULL;
+
+  save_back_entry (dialog);
+
+  item = gtk_bin_get_child (GTK_BIN (row));
+  content = tmaxos_release_get_content (tos, gtk_label_get_text (GTK_LABEL (item)));
+
+  gtk_label_set_text (GTK_LABEL (dialog->label_release_note_content), content);
+
+  gtk_widget_set_visible (dialog->button_back, !g_queue_is_empty (dialog->back_entry_stack));
+
+  gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT);
+  gtk_stack_set_visible_child_name (GTK_STACK (dialog->stack), "os-release-note");
+  gtk_stack_set_transition_type (GTK_STACK (dialog->stack), GTK_STACK_TRANSITION_TYPE_NONE);
+
+  g_free (content);
+  g_object_unref (tos);
+}
+
+static void
+create_release_notes (GsUpdateDialog *dialog)
+{
+  GtkStyleContext *context;
+  GtkWidget *label;
+  TmaxosRelease *tos;
+  GList *list;
+  GList *l;
+
+  dialog->list_box_release_notes = gtk_list_box_new ();
+  gtk_list_box_set_selection_mode (GTK_LIST_BOX (dialog->list_box_release_notes),
+                                   GTK_SELECTION_NONE);
+  gtk_list_box_set_header_func (GTK_LIST_BOX (dialog->list_box_release_notes),
+                                release_notes_header_func,
+                                dialog, NULL);
+  g_signal_connect (GTK_LIST_BOX (dialog->list_box_release_notes), "row-activated",
+                    G_CALLBACK (release_notes_row_activated_cb), dialog);
+  gtk_widget_set_visible (dialog->list_box_release_notes, TRUE);
+  gtk_widget_set_vexpand (dialog->list_box_release_notes, TRUE);
+  gtk_container_add (GTK_CONTAINER (dialog->os_release_box),
+                     dialog->list_box_release_notes);
+  gtk_widget_set_margin_top (dialog->list_box_release_notes, 0);
+
+  context = gtk_widget_get_style_context (dialog->list_box_release_notes);
+  gtk_style_context_add_class (context, "app-updates-section");
+
+  tos = tmaxos_release_new ();
+  list = tmaxos_release_get_list (tos);
+
+  for (l = list; l != NULL; l = l->next)
+  {
+    const gchar *item = l->data;
+    label = gtk_label_new (item);
+    g_object_set (label,
+                  "margin-start", 20,
+                  "margin-end", 0,
+                  "margin-top", 6,
+                  "margin-bottom", 6,
+                  "xalign", 0.0,
+                  "ellipsize", PANGO_ELLIPSIZE_END,
+                  NULL);
+
+    gtk_widget_set_halign (label, GTK_ALIGN_START);
+    gtk_widget_set_hexpand (label, TRUE);
+    gtk_widget_set_valign (label, GTK_ALIGN_CENTER);
+
+    gtk_widget_show_all (label);
+
+    gtk_list_box_insert (GTK_LIST_BOX (dialog->list_box_release_notes), label, -1);
+  }
+
+  g_list_free_full (list, g_free);
+  g_object_unref(tos);
+}
 
 void
 gs_update_dialog_show_update_details (GsUpdateDialog *dialog, GsApp *app)
@@ -757,8 +757,8 @@ gs_update_dialog_show_update_details (GsUpdateDialog *dialog, GsApp *app)
 		gtk_label_set_text (GTK_LABEL (dialog->os_update_description),
 		                    gs_app_get_description (app));
 
-		/* show release notes */
-		//create_release_notes (dialog);
+    /* show release notes */
+    create_release_notes (dialog);
 
 		/* clear existing data */
 		for (guint i = 0; i < GS_UPDATE_DIALOG_SECTION_LAST; i++) {
@@ -938,9 +938,9 @@ gs_update_dialog_class_init (GsUpdateDialogClass *klass)
 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_details);
 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_name);
 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_summary);
-	//gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_release_note_content);
+	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, label_release_note_content);
 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, list_box_installed_updates);
-	//gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, os_release_box);
+	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, os_release_box);
 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, os_update_description);
 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, os_update_box);
 	gtk_widget_class_bind_template_child (widget_class, GsUpdateDialog, scrolledwindow);

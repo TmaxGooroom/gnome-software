@@ -67,8 +67,7 @@ gnome_software_sources = [
   'gs-updates-page.c',
   'gs-updates-section.c',
   'gs-upgrade-banner.c',
-  'gs-vendor.c',
-  'tmaxos-release.c'
+  'gs-vendor.c'
 ]
 
 gnome_software_dependencies = [
